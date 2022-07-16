@@ -1,44 +1,38 @@
-const { Console } = require('console')
-const { hasSubscribers } = require('diagnostics_channel')
 const fs = require('fs/promises')
-
-const fileRoute = './productos.txt'
 
 class Contenedor {
 
-    constructor(title, price, thumbnail) {
-        this.title = title
-        this.price = price
-        this.thumbnail = thumbnail
+    constructor(fileRoute) {
+        this.fileRoute = fileRoute
     }
 
-    static async getAll() {
+    async getAll() {
         try {
-            return JSON.parse(await fs.readFile(fileRoute, { encoding: 'utf8' }))
+            return JSON.parse(await fs.readFile(this.fileRoute, { encoding: 'utf8' }))
         } catch (err) {
             console.log("No se encontró el archivo", err)
             return []
         }
     }
 
-    static async deleteAll() {
+    async deleteAll() {
         try {
-            await fs.unlink(fileRoute)
-            console.log('Archivo borrado')
+            await fs.writeFile(this.fileRoute, "[]")
+            console.log('Archivo vaciado')
         } catch (err) {
             console.log("No se encontró el archivo", err)
         }
     }
 
-    static async save(objeto) {
-        const productos = await Contenedor.getAll()
+    async save(objeto) {
+        const productos = await this.getAll()
         const id = productos.length === 0 ? 1 : productos[productos.length - 1].id + 1
         productos.push({
             ...objeto,
             id
         })
         try {
-            await fs.writeFile(fileRoute, JSON.stringify(productos))
+            await fs.writeFile(this.fileRoute, JSON.stringify(productos))
             return id
         } catch (err) {
             console.log('No se pudo guardar el objeto', err)
@@ -46,21 +40,21 @@ class Contenedor {
         }
     }
 
-    static async getById(id) {
+    async getById(id) {
         try {
-            const productos = await Contenedor.getAll()
+            const productos = await this.getAll()
             return productos.find(producto => producto.id === id)
         } catch (err) {
             console.log(err)
         }
     }
 
-    static async deleteById(id) {
+    async deleteById(id) {
         try {
-            const productos = await Contenedor.getAll()
+            const productos = await this.getAll()
             if (!productos.find(producto => producto.id === id)) throw new Error("No se encontró el producto")
 
-            await fs.writeFile(fileRoute, JSON.stringify(productos.filter(producto => producto.id !== id)))
+            await fs.writeFile(this.fileRoute, JSON.stringify(productos.filter(producto => producto.id !== id)))
             console.log("Producto borrado correctamente")
         } catch (err) {
             console.log(err)
