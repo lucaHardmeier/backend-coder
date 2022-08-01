@@ -1,0 +1,21 @@
+[
+    {
+        "nombre": "Monitor",
+        "precio": 15000,
+        "thumbnail": "https://www.lg.com/es/monitores/lg-24MK430H-B",
+        "id": 1
+    },
+    {
+        "nombre": "Fuente",
+        "precio": 18000,
+        "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_663089-MLA31618354324_072019-O.webp",
+        "id": 2
+    },
+    {
+        "nombre": "Microprocesador",
+        "precio": 20800,
+        "thumbnail": "https://guiagame.com/wp-content/uploads/2022/01/Intel-i7-9700K-CPU.jpg",
+        "id": 3,
+        "productId": 2
+    }
+]
