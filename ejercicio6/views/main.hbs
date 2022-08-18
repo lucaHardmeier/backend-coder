@@ -2,13 +2,13 @@
     <h2>Formulario de productos</h2>
 </div>
 <section class="px-5 py-4 container-sm text-warning bg-dark shadow-lg rounded">
-    <form action="/api/productos" method="post">
+    <form onsubmit="return addProduct(this)">
         <label for="title" class="form-label"><strong>Título:</strong></label>
-        <input type="text" name="title" class="form-control mb-2">
+        <input type="text" name="title" class="form-control mb-2" id="productTitle">
         <label for="price" class="form-label"><strong>Precio:</strong></label>
-        <input type="text" name="price" class="form-control mb-2">
+        <input type="text" name="price" class="form-control mb-2" id="productPrice">
         <label for="thumbnail" class="form-label"><strong>URL:</strong></label>
-        <input type="text" name="thumbnail" class="form-control mb-2">
+        <input type="text" name="thumbnail" class="form-control mb-2" id="productThumbnail">
         <button type="submit" class="btn btn-warning text-dark shadow"><strong>Enviar</strong></button>
     </form>
 </section>
@@ -16,38 +16,22 @@
     <h2>Listado de productos</h2>
 </div>
 <section class="px-5 py-4 container-sm text-warning bg-dark shadow-lg rounded">
-    {{#if errorMsj }}
-    <h3>{{errorMsj}}</h3>
-    {{else}}
-    <ul class="d-flex flex-wrap justify-content-between">
-        {{#each products}}
-        <li class="card bg-warning m-2" style="width: 14rem;">
-            <img src={{this.thumbnail}} class="card-img-top" alt="...">
-            <div class="card-body text-dark">
-                <h5 class="card-title">
-                    {{this.id}} - {{this.title}}
-                </h5>
-                <p class="card-text">
-                    ${{this.price}}
-                </p>
-            </div>
-        </li>
-        {{/each}}
+    <ul class="d-flex flex-wrap justify-content-between" id="products">
+
     </ul>
-    {{/if}}
 </section>
 <div class="m-4 p-2 d-flex flex-md-row justify-content-center text-white bg-dark shadow-lg rounded">
     <h2>Chat de clientes</h2>
 </div>
 <section class="px-5 py-4 container-sm text-warning bg-dark shadow-lg rounded">
-    <form action="/api/productos" method="post">
+    <form onsubmit="return addMessage(this)">
         <label for="email" class="form-label"><strong>Email</strong></label>
-        <input type="text" name="email" class="form-control mb-2">
+        <input type="text" name="email" class="form-control mb-2" id="userEmail">
         <label for="message" class="form-label"><strong>Mensaje</strong></label>
-        <input type="text" name="message" class="form-control mb-2">
+        <input type="text" name="message" class="form-control mb-2" id="userMessage">
         <button type="submit" class="btn btn-warning text-dark shadow"><strong>Enviar</strong></button>
     </form>
-    <div>
+    <ul class="d-flex flex-wrap justify-content-between" id="chatLog">
 
-    </div>
+    </ul>
 </section>

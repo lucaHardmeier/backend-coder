@@ -39,9 +39,20 @@ httpServer.listen(PORT, () => {
 
 const { Contenedor } = require('./Contenedor')
 const container = new Contenedor('./productos.json')
+const chat = []
 
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
     const products = await container.getAll()
     socket.emit('products', products)
+    socket.on('addProduct', async (product) => {
+        await container.save(product)
+        io.sockets.emit('products', products)
+    })
+
+    socket.emit('chat', chat)
+    socket.on('newMessage', async (message) => {
+        chat.push(message)
+        io.sockets.emit('chat', chat)
+    })
 })
