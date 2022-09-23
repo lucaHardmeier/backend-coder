@@ -33,4 +33,4 @@ class MongoDbContainer {
     }
 }
 
-export default MongoDbContainer
+exports.MongoDbContainer = MongoDbContainer

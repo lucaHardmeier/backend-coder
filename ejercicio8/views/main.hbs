@@ -1,13 +1,22 @@
-<div class="m-4 p-2 d-flex flex-md-row justify-content-center text-white bg-dark shadow-lg rounded">
+<div class="m-4 p-2 d-flex flex-md-col justify-content-center text-white bg-dark shadow-lg rounded">
     <h2>Chat de clientes</h2>
+    <h4 id="compressView"></h4>
 </div>
 <section class="px-5 py-4 container-sm text-warning bg-dark shadow-lg rounded">
     <a href="/api/productos-test" class="btn btn-outline-warning my-4">Ir a los productos</a>
     <form onsubmit="return addMessage(this)">
         <label for="email" class="form-label"><strong>Email</strong></label>
         <input type="text" name="email" class="form-control mb-2" id="userEmail">
+        <label for="fistName" class="form-label"><strong>Nombre</strong></label>
+        <input type="text" fistName="name" class="form-control mb-2" id="userFirstName">
+        <label for="lastName" class="form-label"><strong>Apellido</strong></label>
+        <input type="text" name="lastName" class="form-control mb-2" id="userLastName">
+        <label for="age" class="form-label"><strong>Edad</strong></label>
+        <input type="text" name="age" class="form-control mb-2" id="userAge">
+        <label for="alias" class="form-label"><strong>Alias</strong></label>
+        <input type="text" name="alias" class="form-control mb-2" id="userAlias">
         <label for="message" class="form-label"><strong>Mensaje</strong></label>
-        <input type="text" name="message" class="form-control mb-2" id="userMessage">
+        <input type="textarea" name="message" class="form-control mb-2" id="userMessage">
         <button type="submit" class="btn btn-warning text-dark shadow"><strong>Enviar</strong></button>
     </form>
     <ul id="chatLog">

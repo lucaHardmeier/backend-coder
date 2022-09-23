@@ -4,6 +4,7 @@ const { Server: IOServer } = require('socket.io')
 const app = express()
 const httpServer = new HttpServer(app)
 const io = new IOServer(httpServer)
+require('./config/mongodb')
 
 const { formRute } = require('./productos')
 const handlebars = require('express-handlebars')
@@ -37,8 +38,9 @@ httpServer.listen(PORT, () => {
     console.log(`Sevidor corriendo en el puerto ${PORT}`)
 })
 
-const { default: MongoDbContainer } = require('./Contenedor')
+
 const normalizr = require('normalizr')
+const { MongoDbContainer } = require('./Contenedor')
 const { normalize, denormalize, schema } = normalizr
 
 const chatContainer = new MongoDbContainer('chat', {
@@ -47,25 +49,32 @@ const chatContainer = new MongoDbContainer('chat', {
         nombre: String,
         apellido: String,
         edad: Number,
-        alias: String,
-        avatar: String,
+        alias: String
     },
-    text: String
+    content: String
 })
 
 const schemaAuthor = new schema.Entity('authors', {}, { idAttribute: 'email' })
-const schemaMessage = new schema.Entity('authors', {
+const schemaMessage = new schema.Entity('messages', {
     author: [schemaAuthor]
 })
+
+function normalization(chat) {
+    const normalizedChat = chat.length ? normalize({ id: 'mensajes', chat }, schemaMessage) : []
+    const denormalizedChat = chat.length ? denormalize(normalizedChat.result, schemaMessage, normalizedChat.entities) : { id: 'mensajes', chat: [] }
+    return { normalizedChat, denormalizedChat }
+}
 
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
     const chat = await chatContainer.getAll()
-    const normalizedChat = normalize(JSON.stringify(chat), schemaMessage)
-    socket.emit('chat', { normalizedChat, schemaMessage })
+    const { normalizedChat, denormalizedChat } = normalization(chat)
+    socket.emit('chat', { normalizedChat, schemaMessage, denormalizedChat })
 
     socket.on('newMessage', async (message) => {
-        const chat = await chatContainer.save(message)
-        io.sockets.emit('chat', chat)
+        await chatContainer.save(message)
+        const chat = await chatContainer.getAll()
+        const { normalizedChat, denormalizedChat } = normalization(chat)
+        io.sockets.emit('chat', { normalizedChat, schemaMessage, denormalizedChat })
     })
 })
