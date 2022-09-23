@@ -37,43 +37,35 @@ httpServer.listen(PORT, () => {
     console.log(`Sevidor corriendo en el puerto ${PORT}`)
 })
 
-const { Contenedor } = require('./Contenedor')
-const container = new Contenedor('products')
+const { default: MongoDbContainer } = require('./Contenedor')
+const normalizr = require('normalizr')
+const { normalize, denormalize, schema } = normalizr
 
-const SQLite3 = require('./options/SQLite3')
-const knex = require('knex').knex(SQLite3)
+const chatContainer = new MongoDbContainer('chat', {
+    author: {
+        id: String,
+        nombre: String,
+        apellido: String,
+        edad: Number,
+        alias: String,
+        avatar: String,
+    },
+    text: String
+})
 
-
-    ; (async function () {
-        if (!await knex.schema.hasTable('chat')) {
-            knex.schema.createTable(tableName, table => {
-                table.increments('id')
-                table.string('user')
-                table.string('date')
-                table.string('content')
-            })
-                .then(() => console.log('tabla creada'))
-                .catch(err => console.log('error al crear tabla', err))
-                .finally(() => {
-                    knex.destroy()
-                })
-        }
-    })()
+const schemaAuthor = new schema.Entity('authors', {}, { idAttribute: 'email' })
+const schemaMessage = new schema.Entity('authors', {
+    author: [schemaAuthor]
+})
 
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
-    const products = await container.getAll()
-    const chat = await knex.from('chat')
-    socket.emit('products', products)
-    socket.emit('chat', chat)
-    socket.on('addProduct', async (product) => {
-        await container.save(product)
-        io.sockets.emit('products', products)
-    })
+    const chat = await chatContainer.getAll()
+    const normalizedChat = normalize(JSON.stringify(chat), schemaMessage)
+    socket.emit('chat', { normalizedChat, schemaMessage })
 
     socket.on('newMessage', async (message) => {
-        await knex('chat').insert(message)
-        const chat = await knex.from('chat')
+        const chat = await chatContainer.save(message)
         io.sockets.emit('chat', chat)
     })
 })

@@ -34,5 +34,11 @@
         "price": "4.960",
         "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_747866-MLA43803420529_102020-O.webp",
         "id": 6
+    },
+    {
+        "title": "Monitor",
+        "price": "1145460",
+        "thumbnail": "https://www.lg.com/ar/images/monitores/md06248516/gallery/medium03.jpg",
+        "id": 7
     }
 ]
