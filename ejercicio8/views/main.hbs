@@ -1,7 +1,19 @@
-<div class="m-4 p-2 d-flex flex-md-col justify-content-center text-white bg-dark shadow-lg rounded">
+<header class="m-4 p-2 d-flex flex-md-column justify-content-center text-white bg-dark shadow-lg rounded">
+    {{#if nameUser }}
+    <form action="/api/logout" method="post">
+        <h2>Bienvenido {{nameUser}}</h2>
+        <button type="submit" class="btn btn-warning text-dark shadow"><strong>Salir</strong></button>
+    </form>
+    {{else}}
+    <form action="/api/login" method="post">
+        <label for="name" class="form-label"><strong>Nombre</strong></label>
+        <input type="text" name="name" class="form-control mb-2" id="userFirstName">
+        <button type="submit" class="btn btn-warning text-dark shadow"><strong>Enviar</strong></button>
+    </form>
+    {{/if}}
     <h2>Chat de clientes</h2>
     <h4 id="compressView"></h4>
-</div>
+</header>
 <section class="px-5 py-4 container-sm text-warning bg-dark shadow-lg rounded">
     <a href="/api/productos-test" class="btn btn-outline-warning my-4">Ir a los productos</a>
     <form onsubmit="return addMessage(this)">

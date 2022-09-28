@@ -5,6 +5,19 @@ const app = express()
 const httpServer = new HttpServer(app)
 const io = new IOServer(httpServer)
 require('./config/mongodb')
+const session = require('express-session')
+const MongoStore = require('connect-mongo')
+
+app.use(session({
+    store: MongoStore.create({ mongoUrl: 'mongodb+srv://hardmeierluca:105501.Lh@cluster1.2b5gqaa.mongodb.net/?retryWrites=true&w=majority' }),
+    secret: '123456',
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: {
+        maxAge: 60000
+    }
+}))
 
 const { formRute } = require('./productos')
 const handlebars = require('express-handlebars')

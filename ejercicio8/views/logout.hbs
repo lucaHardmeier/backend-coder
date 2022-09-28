@@ -1,0 +1,10 @@
+<header class="m-4 p-2 d-flex flex-md-column justify-content-center text-white bg-dark shadow-lg rounded">
+    {{#if logout}}
+    <h2>Adios {{logout}}!</h2>
+    {{/if}}
+</header>
+<script>
+    setTimeout(() => {
+        location.href = '/api'
+    }, 2000)
+</script>
