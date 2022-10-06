@@ -5,11 +5,7 @@
         <button type="submit" class="btn btn-warning text-dark shadow"><strong>Salir</strong></button>
     </form>
     {{else}}
-    <form action="/api/login" method="post">
-        <label for="name" class="form-label"><strong>Nombre</strong></label>
-        <input type="text" name="name" class="form-control mb-2" id="userFirstName">
-        <button type="submit" class="btn btn-warning text-dark shadow"><strong>Enviar</strong></button>
-    </form>
+    <h2>Usuario anónimo</h2>
     {{/if}}
     <h2>Chat de clientes</h2>
     <h4 id="compressView"></h4>

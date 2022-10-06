@@ -9,8 +9,23 @@ route.get('/', async (req, res) => {
     res.render('main', { nameUser })
 })
 
+route.get('/login', async (req, res) => {
+    res.render('login')
+})
+
 route.post('/login', (req, res) => {
     req.session.name = req.body.name
+    req.session.password = req.body.password
+    res.redirect('/api')
+})
+
+route.get('/signin', async (req, res) => {
+    res.render('signin')
+})
+
+route.post('/signin', (req, res) => {
+    req.session.name = req.body.name
+    req.session.password = req.body.password
     res.redirect('/api')
 })
 

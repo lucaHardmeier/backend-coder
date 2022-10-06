@@ -4,14 +4,8 @@
         <h2>Bienvenido {{nameUser}}</h2>
         <button type="submit" class="btn btn-warning text-dark shadow"><strong>Salir</strong></button>
     </form>
-    {{else if logout}}
-    <h2>Adios {{nameUser}}!</h2>
     {{else}}
-    <form action="/api/login" method="post">
-        <label for="name" class="form-label"><strong>Nombre</strong></label>
-        <input type="text" name="name" class="form-control mb-2" id="userFirstName">
-        <button type="submit" class="btn btn-warning text-dark shadow"><strong>Enviar</strong></button>
-    </form>
+    <h2>Usuario anónimo</h2>
     {{/if}}
     <h1>Listado de productos</h1>
 </header>
