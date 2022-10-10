@@ -1,7 +1,7 @@
 <header class="m-4 p-2 d-flex flex-md-column justify-content-center text-white bg-dark shadow-lg rounded">
-    {{#if nameUser }}
+    {{#if username }}
     <form action="/api/logout" method="post">
-        <h2>Bienvenido {{nameUser}}</h2>
+        <h2>Bienvenido {{username}}</h2>
         <button type="submit" class="btn btn-warning text-dark shadow"><strong>Salir</strong></button>
     </form>
     {{else}}

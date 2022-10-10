@@ -1,11 +1,10 @@
 const express = require('express')
 const route = express.Router()
 const { faker } = require('@faker-js/faker')
-
-
+const passport = require('passport')
 
 route.get('/', async (req, res) => {
-    const nameUser = req.session?.name
+
     res.render('main', { nameUser })
 })
 
@@ -13,36 +12,30 @@ route.get('/login', async (req, res) => {
     res.render('login')
 })
 
-route.post('/login', (req, res) => {
-    req.session.name = req.body.name
-    req.session.password = req.body.password
-    res.redirect('/api')
+route.post('/login', passport.authenticate('login', { failureRedirect: '/api/user-error-login' }), (req, res) => {
+    res.render('main', { username: req.body.username })
 })
 
-route.get('/signin', async (req, res) => {
-    res.render('signin')
+route.get('/signup', async (req, res) => {
+    res.render('signup', {})
 })
 
-route.post('/signin', (req, res) => {
-    req.session.name = req.body.name
-    req.session.password = req.body.password
-    res.redirect('/api')
+route.post('/signup', passport.authenticate('signup', { failureRedirect: '/api/user-error-signup' }), (req, res) => {
+    res.render('main', { username: req.body.username })
 })
 
 route.post('/logout', (req, res) => {
-    const logout = req.session.name
-    console.log(logout)
-    req.session.destroy(err => {
-        if (err) {
-            return res.redirect('/api')
-        } else {
-            console.log('entra al else')
-            return res.render('logout', { logout })
-        }
-    })
+    req.logout()
+    res.render('main', { username: 'Anónimo' })
 })
 
+route.get('/user-error-signup', async (req, res) => {
+    res.render('userErrorSignup', {})
+})
 
+route.get('/user-error-login', async (req, res) => {
+    res.render('userErrorLogin', {})
+})
 
 route.get('/productos-test', async (req, res) => {
     const nameUser = req.session?.name

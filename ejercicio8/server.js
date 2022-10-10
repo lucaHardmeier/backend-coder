@@ -7,6 +7,11 @@ const io = new IOServer(httpServer)
 require('./config/mongodb')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const { User } = require('./user.js')
+const { createHash } = require('./utils/createHash.js')
+const { isValidPassword } = require('./utils/isValidPassword.js')
 
 app.use(session({
     store: MongoStore.create({ mongoUrl: 'mongodb+srv://hardmeierluca:105501.Lh@cluster1.2b5gqaa.mongodb.net/?retryWrites=true&w=majority' }),
@@ -15,11 +20,55 @@ app.use(session({
     saveUninitialized: false,
     rolling: true,
     cookie: {
-        maxAge: 60000
+        maxAge: 360000,
+        httpOnly: false,
+        secure: false
     }
 }))
 
-const { formRute } = require('./productos')
+passport.serializeUser((user, done) => {
+    done(null, user._id)
+})
+
+passport.deserializeUser(async (id, done) => {
+    const user = await User.findById(id)
+    done(null, user)
+})
+
+passport.use('login', new LocalStrategy(
+    async (username, password, done) => {
+        try {
+            const user = await User.findOne({ username })
+            if (!user) return done(null, false, { message: 'user not found' })
+            if (!await isValidPassword(user.password, password)) done(null, false, { message: 'wrong password' })
+            return done(null, user)
+        } catch (err) {
+            return done(err, { message: 'internal error' })
+        }
+    })
+)
+
+passport.use('signup', new LocalStrategy(
+    async (username, password, done) => {
+        try {
+            const user = await User.findOne({ username })
+            if (user) return done(null, false, { message: `username ${username} already in use` })
+            const newUser = new User({
+                username,
+                password: await createHash(password)
+            })
+            await newUser.save()
+            return done(null, newUser)
+        } catch (err) {
+            return done(err, { message: 'internal error' })
+        }
+    })
+)
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+const { formRute } = require('./user.routes')
 const handlebars = require('express-handlebars')
     .create({
         extname: ".hbs",
