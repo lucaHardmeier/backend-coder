@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const { Server: HttpServer } = require('http')
 const { Server: IOServer } = require('socket.io')
@@ -12,10 +13,18 @@ const LocalStrategy = require('passport-local')
 const { User } = require('./user.js')
 const { createHash } = require('./utils/createHash.js')
 const { isValidPassword } = require('./utils/isValidPassword.js')
+const { infoRute } = require('./routes/info.routes.js')
+const { formRute } = require('./routes/user.routes')
+const normalizr = require('normalizr')
+const { MongoDbContainer } = require('./Contenedor')
+const { normalize, denormalize, schema } = normalizr
+var argv = require('minimist')(process.argv.slice(2), { default: { port: 8080 } })
+
+const { SESSION_SECRET, MONGODB_SESSION } = process.env
 
 app.use(session({
-    store: MongoStore.create({ mongoUrl: 'mongodb+srv://hardmeierluca:105501.Lh@cluster1.2b5gqaa.mongodb.net/?retryWrites=true&w=majority' }),
-    secret: '123456',
+    store: MongoStore.create({ mongoUrl: MONGODB_SESSION }),
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     rolling: true,
@@ -68,7 +77,6 @@ passport.use('signup', new LocalStrategy(
 app.use(passport.initialize())
 app.use(passport.session())
 
-const { formRute } = require('./user.routes')
 const handlebars = require('express-handlebars')
     .create({
         extname: ".hbs",
@@ -87,6 +95,7 @@ app.engine(
 app.set('view engine', 'hbs')
 app.set("views", "./views")
 app.use('/api', formRute)
+app.use('/info', infoRute)
 
 app.use(express.static('./public'))
 
@@ -94,16 +103,10 @@ app.get('/', (req, res) => {
     res.sendFile('index.html', { root: __dirname })
 })
 
-const PORT = process.env.port || 8080
-
-httpServer.listen(PORT, () => {
-    console.log(`Sevidor corriendo en el puerto ${PORT}`)
+httpServer.listen(argv.port, () => {
+    console.log(`Sevidor corriendo en el puerto ${argv.port}`)
 })
 
-
-const normalizr = require('normalizr')
-const { MongoDbContainer } = require('./Contenedor')
-const { normalize, denormalize, schema } = normalizr
 
 const chatContainer = new MongoDbContainer('chat', {
     author: {
